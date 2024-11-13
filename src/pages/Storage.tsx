@@ -1,8 +1,10 @@
-import { FC, useState } from 'react';
+import { FC, useState, useRef } from 'react';
 import { LayoutGrid, List, Upload, MoreVertical, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Toggle } from '@/components/ui/toggle';
+import { Progress } from '@/components/ui/progress';
+import { toast } from 'sonner';
 
 interface FileItem {
   id: string;
@@ -16,6 +18,8 @@ interface FileItem {
 const Storage: FC = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Sample data - in a real app, this would come from your backend
   const files: FileItem[] = [
@@ -57,6 +61,27 @@ const Storage: FC = () => {
     file.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Simulate file upload progress
+    setUploadProgress(0);
+    const interval = setInterval(() => {
+      setUploadProgress((prev) => {
+        if (prev === null || prev >= 100) {
+          clearInterval(interval);
+          toast.success('File uploaded successfully!');
+          if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+          }
+          return null;
+        }
+        return prev + 10;
+      });
+    }, 500);
+  };
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -78,12 +103,34 @@ const Storage: FC = () => {
               <List className="h-4 w-4" />
             </Toggle>
           </div>
-          <Button className="bg-primary-500 hover:bg-primary-600">
-            <Upload className="h-4 w-4 mr-2" />
-            Upload Files
-          </Button>
+          <div className="relative">
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileUpload}
+              className="hidden"
+              accept="*/*"
+            />
+            <Button 
+              onClick={() => fileInputRef.current?.click()}
+              className="bg-primary-500 hover:bg-primary-600"
+            >
+              <Upload className="h-4 w-4 mr-2" />
+              Upload Files
+            </Button>
+          </div>
         </div>
       </div>
+
+      {uploadProgress !== null && (
+        <div className="mb-4">
+          <div className="flex justify-between text-sm text-gray-600 mb-1">
+            <span>Uploading...</span>
+            <span>{uploadProgress}%</span>
+          </div>
+          <Progress value={uploadProgress} className="h-2" />
+        </div>
+      )}
 
       <div className="mb-6 max-w-xl">
         <div className="relative">
