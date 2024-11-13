@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Sidebar from "./components/layout/Sidebar";
 import Header from "./components/layout/Header";
 import Index from "./pages/Index";
+import Storage from "./pages/Storage";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
             <main className="flex-1 overflow-auto bg-gray-50">
               <Routes>
                 <Route path="/" element={<Index />} />
+                <Route path="/storage" element={<Storage />} />
               </Routes>
             </main>
           </div>
