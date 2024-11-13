@@ -7,6 +7,7 @@ import Sidebar from "./components/layout/Sidebar";
 import Header from "./components/layout/Header";
 import Index from "./pages/Index";
 import Storage from "./pages/Storage";
+import Recent from "./pages/Recent";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/storage" element={<Storage />} />
+                <Route path="/recent" element={<Recent />} />
               </Routes>
             </main>
           </div>
